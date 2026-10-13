@@ -1,10 +1,14 @@
 # Monitor de Incidentes
 
+[![Tests](https://github.com/Guille143/monitor-incidentes/actions/workflows/tests.yml/badge.svg)](https://github.com/Guille143/monitor-incidentes/actions/workflows/tests.yml)
+
+**[Ver el reporte diario en vivo](https://guille143.github.io/monitor-incidentes/)** · se genera solo todos los días con GitHub Actions.
+
 API para registrar, consultar y analizar incidentes de red de un proveedor de telecomunicaciones, con clasificación y resúmenes generados por IA (Claude).
 
 Proyecto de portfolio basado en mi experiencia como analista de redes y automatización. Los datos son ficticios y se generan con un script que reproduce patrones realistas (zonas con más fallas, cortes de fibra que tardan más en resolverse, picos nocturnos).
 
-**Stack:** Python · FastAPI · SQLAlchemy · MariaDB · pandas · matplotlib · Claude API · Docker · pytest
+**Stack:** Python · FastAPI · SQLAlchemy · MariaDB · pandas · matplotlib · Claude API · Docker · pytest · GitHub Actions
 
 ## Resultados del análisis
 
@@ -20,7 +24,7 @@ Con los datos de prueba generados (500 incidentes en 90 días):
 - [x] Etapa 1: API REST, base de datos MariaDB, Docker y generador de datos
 - [x] Etapa 2: análisis de datos con pandas y gráficos
 - [x] Etapa 3: clasificación y resumen de incidentes con IA
-- [ ] Etapa 4: reporte diario automático
+- [x] Etapa 4: reporte diario automático (GitHub Actions + GitHub Pages)
 
 ## Cómo correrlo
 
@@ -73,6 +77,19 @@ El archivo `.env` está en el `.gitignore`, así que la key nunca se sube al rep
 
 Por defecto usa Claude Haiku (rápido y barato). Se puede cambiar con la variable `CLAUDE_MODEL`.
 
+### Reporte diario
+
+```bash
+python -m scripts.reporte_diario
+```
+
+Genera `reportes/reporte_AAAA-MM-DD.html`: indicadores de las últimas 24 horas comparados con el promedio de los 30 días anteriores, resumen escrito por IA, tabla de incidentes abiertos y gráficos. Es un único archivo HTML con los gráficos embebidos, listo para abrir o mandar por mail. Si no hay API key, se genera igual sin el resumen.
+
+### Automatización
+
+- **`.github/workflows/tests.yml`**: corre todos los tests en cada push.
+- **`.github/workflows/reporte-diario.yml`**: todos los días a las 8:00 (Argentina) genera datos nuevos, arma el reporte y lo publica en GitHub Pages. La API key se guarda como secret del repositorio (`ANTHROPIC_API_KEY`).
+
 ### Tests
 
 ```bash
@@ -103,11 +120,17 @@ app/
   main.py        endpoints de la API
   analisis.py    funciones de análisis con pandas
   ia.py          clasificación y resúmenes con la API de Claude
+  reporte.py     datos y HTML del reporte diario
 scripts/
   generar_datos.py   carga incidentes ficticios
   analizar.py        genera gráficos y tablas
+  reporte_diario.py  genera el reporte diario en HTML
 tests/
   test_api.py        tests de los endpoints
   test_analisis.py   tests del análisis
   test_ia.py         tests de la IA, con un cliente falso (no gastan créditos)
+  test_reporte.py    tests del reporte diario
+.github/workflows/
+  tests.yml          tests automáticos en cada push
+  reporte-diario.yml reporte diario automático
 ```

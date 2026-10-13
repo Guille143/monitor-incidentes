@@ -98,8 +98,9 @@ def generar(cantidad: int, dias: int, semilla: int) -> list[Incidente]:
         duracion = timedelta(minutes=rng.randint(minimo, maximo))
         fin = inicio + duracion
 
-        # Los incidentes recientes que todavía no terminaron quedan abiertos.
-        resuelto = fin <= ahora and rng.random() > 0.03
+        # Quedan abiertos los que todavía no terminaron y algunos de las últimas 24 horas.
+        reciente = inicio > ahora - timedelta(hours=24)
+        resuelto = fin <= ahora and not (reciente and rng.random() < 0.3)
 
         incidentes.append(
             Incidente(
