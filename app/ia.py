@@ -65,9 +65,19 @@ Criterios de severidad:
 Respondé en español rioplatense, breve y técnico."""
 
 
+def _llamar(cliente, **parametros):
+    """Llama a la API y convierte sus errores (key inválida, sin crédito, etc.)
+    en IAError, para que la API devuelva un mensaje claro y no un error 500."""
+    try:
+        return cliente.messages.create(**parametros)
+    except Exception as e:
+        raise IAError(f"Error de la API de Claude ({type(e).__name__}): {e}") from e
+
+
 def clasificar(descripcion: str, cliente=None) -> dict:
     cliente = cliente or crear_cliente()
-    respuesta = cliente.messages.create(
+    respuesta = _llamar(
+        cliente,
         model=MODELO,
         max_tokens=1024,
         system=INSTRUCCIONES_CLASIFICAR,
@@ -92,7 +102,8 @@ No inventes datos que no estén en las estadísticas. Sin títulos ni saludos.""
 
 def resumir(estadisticas: dict, cliente=None) -> str:
     cliente = cliente or crear_cliente()
-    respuesta = cliente.messages.create(
+    respuesta = _llamar(
+        cliente,
         model=MODELO,
         max_tokens=2048,
         system=INSTRUCCIONES_RESUMIR,

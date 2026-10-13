@@ -64,3 +64,15 @@ def test_sin_api_key(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ia.IAError):
         ia.crear_cliente()
+
+
+def test_error_de_la_api_se_convierte_en_iaerror():
+    class ClienteQueFalla:
+        def __init__(self):
+            self.messages = SimpleNamespace(create=self._create)
+
+        def _create(self, **kwargs):
+            raise RuntimeError("invalid x-api-key")
+
+    with pytest.raises(ia.IAError):
+        ia.clasificar("Texto de prueba del incidente", ClienteQueFalla())
