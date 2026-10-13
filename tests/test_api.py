@@ -93,3 +93,34 @@ def test_estadisticas():
     zapala = next(z for z in zonas if z["zona"] == "Zapala")
     assert zapala["cantidad"] >= 1
     assert zapala["minutos_promedio_resolucion"] == 240.0
+
+
+# ---------- Endpoints con IA (con un cliente falso) ----------
+
+from app.main import get_cliente_ia  # noqa: E402
+from tests.test_ia import CLASIFICACION, ClienteFalso, respuesta_herramienta  # noqa: E402
+
+
+def test_clasificar_texto():
+    app.dependency_overrides[get_cliente_ia] = lambda: ClienteFalso(respuesta_herramienta(**CLASIFICACION))
+    r = cliente.post("/ia/clasificar", json={"descripcion": "Se cortó la fibra en ruta 22"})
+    app.dependency_overrides.pop(get_cliente_ia)
+    assert r.status_code == 200
+    assert r.json()["tipo"] == "corte de fibra"
+
+
+def test_crear_desde_texto():
+    app.dependency_overrides[get_cliente_ia] = lambda: ClienteFalso(respuesta_herramienta(**CLASIFICACION))
+    r = cliente.post("/incidentes/desde-texto", json={"descripcion": "Se cortó la fibra en ruta 22", "zona": "Zapala"})
+    app.dependency_overrides.pop(get_cliente_ia)
+    assert r.status_code == 201
+    datos = r.json()
+    assert datos["incidente"]["tipo"] == "corte de fibra"
+    assert datos["incidente"]["severidad"] == "alta"
+    assert datos["clasificacion"]["accion_sugerida"]
+
+
+def test_sin_api_key_devuelve_503(monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    r = cliente.post("/ia/clasificar", json={"descripcion": "Se cortó la fibra en ruta 22"})
+    assert r.status_code == 503

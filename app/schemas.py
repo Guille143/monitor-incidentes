@@ -37,3 +37,30 @@ class ResumenZona(BaseModel):
     zona: str
     cantidad: int
     minutos_promedio_resolucion: float | None
+
+
+class TextoIncidente(BaseModel):
+    descripcion: str = Field(min_length=5, max_length=2000)
+
+
+class IncidenteDesdeTexto(TextoIncidente):
+    zona: str = Field(min_length=2, max_length=50)
+    fecha_inicio: datetime | None = None  # si no se manda, se usa la hora actual
+
+
+class ClasificacionIA(BaseModel):
+    tipo: str
+    severidad: Severidad
+    causa_probable: str
+    accion_sugerida: str
+
+
+class IncidenteClasificado(BaseModel):
+    incidente: Incidente
+    clasificacion: ClasificacionIA
+
+
+class ResumenIA(BaseModel):
+    dias: int
+    estadisticas: dict
+    resumen: str
