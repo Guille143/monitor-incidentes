@@ -4,12 +4,12 @@ API para registrar, consultar y analizar incidentes de red de un proveedor de te
 
 Proyecto de portfolio basado en mi experiencia como analista de redes y automatización. Los datos son ficticios y se generan con un script que reproduce patrones realistas (zonas con más fallas, cortes de fibra que tardan más en resolverse, picos nocturnos).
 
-**Stack:** Python · FastAPI · SQLAlchemy · MariaDB · Docker · pytest
+**Stack:** Python · FastAPI · SQLAlchemy · MariaDB · pandas · matplotlib · Docker · pytest
 
 ## Estado del proyecto
 
 - [x] Etapa 1: API REST, base de datos MariaDB, Docker y generador de datos
-- [ ] Etapa 2: análisis de datos con pandas y gráficos
+- [x] Etapa 2: análisis de datos con pandas y gráficos
 - [ ] Etapa 3: clasificación y resumen de incidentes con IA
 - [ ] Etapa 4: reporte diario automático
 
@@ -34,6 +34,19 @@ pip install -r requirements.txt
 python -m scripts.generar_datos
 uvicorn app.main:app --reload
 ```
+
+### Análisis de datos
+
+```bash
+python -m scripts.analizar
+```
+
+Muestra los hallazgos principales y guarda gráficos y tablas en la carpeta `reportes/`:
+
+- incidentes por zona
+- tiempo de resolución por tipo de falla (mediana)
+- incidentes por hora del día
+- incidentes por día, con detección automática de días pico
 
 ### Tests
 
@@ -60,8 +73,11 @@ app/
   models.py      tabla de incidentes
   schemas.py     validación de datos con Pydantic
   main.py        endpoints de la API
+  analisis.py    funciones de análisis con pandas
 scripts/
   generar_datos.py   carga incidentes ficticios
+  analizar.py        genera gráficos y tablas
 tests/
   test_api.py        tests de los endpoints
+  test_analisis.py   tests del análisis
 ```
