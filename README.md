@@ -6,6 +6,15 @@ Proyecto de portfolio basado en mi experiencia como analista de redes y automati
 
 **Stack:** Python · FastAPI · SQLAlchemy · MariaDB · pandas · matplotlib · Docker · pytest
 
+## Resultados del análisis
+
+Con los datos de prueba generados (500 incidentes en 90 días):
+
+![Incidentes por zona](docs/img/incidentes_por_zona.png)
+![Tiempo de resolución por tipo de falla](docs/img/resolucion_por_tipo.png)
+![Incidentes por hora del día](docs/img/incidentes_por_hora.png)
+![Incidentes por día](docs/img/incidentes_por_dia.png)
+
 ## Estado del proyecto
 
 - [x] Etapa 1: API REST, base de datos MariaDB, Docker y generador de datos
