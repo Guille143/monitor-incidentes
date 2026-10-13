@@ -59,12 +59,13 @@ Muestra los hallazgos principales y guarda gráficos y tablas en la carpeta `rep
 
 ### Funciones con IA
 
-Necesitan una API key de Claude (se crea en [console.anthropic.com](https://console.anthropic.com)):
+Necesitan una API key de Claude (se crea en [console.anthropic.com](https://console.anthropic.com)). Creá un archivo `.env` en la raíz del proyecto con esta línea:
 
-```bash
-export ANTHROPIC_API_KEY=tu_key      # en Windows: set ANTHROPIC_API_KEY=tu_key
-uvicorn app.main:app --reload
 ```
+ANTHROPIC_API_KEY=tu_key
+```
+
+El archivo `.env` está en el `.gitignore`, así que la key nunca se sube al repositorio.
 
 - **`POST /ia/clasificar`**: recibe la descripción de un incidente en texto libre y devuelve tipo, severidad, causa probable y acción sugerida. La respuesta sale de una herramienta con esquema fijo, así que siempre tiene la misma estructura y se valida antes de usarla.
 - **`POST /incidentes/desde-texto`**: lo mismo, pero además guarda el incidente con el tipo y la severidad que asignó la IA.

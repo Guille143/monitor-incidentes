@@ -6,11 +6,16 @@ Dos usos:
   - resumir(): convierte las estadísticas del período en un resumen ejecutivo
     en español, como el que leería un jefe de operaciones.
 
-Necesita la variable de entorno ANTHROPIC_API_KEY.
+Necesita la variable de entorno ANTHROPIC_API_KEY. Se puede poner en un
+archivo .env en la raíz del proyecto (ese archivo no se sube a GitHub).
 El modelo se puede cambiar con CLAUDE_MODEL (por defecto, Haiku: rápido y barato).
 """
 import json
 import os
+
+from dotenv import load_dotenv
+
+load_dotenv()  # lee el archivo .env si existe
 
 MODELO = os.getenv("CLAUDE_MODEL", "claude-haiku-5-5")
 
